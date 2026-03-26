@@ -1,4 +1,3 @@
-// src/types/index.ts
 export type ApiPostMethods = 'POST' | 'PUT' | 'DELETE';
 
 export interface IApi {
@@ -26,6 +25,9 @@ export interface IBuyer {
 
 // Тип способа оплаты
 export type TPayment = 'card' | 'cash';
+
+// Тип для ошибок валидации
+export type TValidationErrors = Partial<Record<keyof IBuyer, string>>;
 
 // Интерфейс заказа для отправки на сервер
 export interface IOrder {

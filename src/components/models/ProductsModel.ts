@@ -1,4 +1,3 @@
-// src/components/models/ProductsModel.ts
 import { IProduct } from '../../types';
 
 /**
@@ -6,17 +5,17 @@ import { IProduct } from '../../types';
  * Отвечает за хранение и управление данными о товарах в каталоге
  */
 export class ProductsModel {
-    // Массив всех товаров в каталоге (приватное поле)
-    private _items: IProduct[] = [];
-    // Товар, выбранный для подробного просмотра (приватное поле)
-    private _selectedProduct: IProduct | null = null;
+    // Массив всех товаров в каталоге
+    private items: IProduct[] = [];
+    // Товар, выбранный для подробного просмотра
+    private selectedProduct: IProduct | null = null;
 
     /**
      * Сохраняет массив товаров в модель
      * @param items - массив товаров для сохранения
      */
     setItems(items: IProduct[]): void {
-        this._items = items;
+        this.items = items;
     }
 
     /**
@@ -24,7 +23,7 @@ export class ProductsModel {
      * @returns массив товаров
      */
     getItems(): IProduct[] {
-        return this._items;
+        return this.items;
     }
 
     /**
@@ -33,7 +32,7 @@ export class ProductsModel {
      * @returns найденный товар или undefined
      */
     getProductById(id: string): IProduct | undefined {
-        return this._items.find(item => item.id === id);
+        return this.items.find(item => item.id === id);
     }
 
     /**
@@ -41,7 +40,7 @@ export class ProductsModel {
      * @param product - выбранный товар
      */
     setSelectedProduct(product: IProduct): void {
-        this._selectedProduct = product;
+        this.selectedProduct = product;
     }
 
     /**
@@ -49,6 +48,6 @@ export class ProductsModel {
      * @returns выбранный товар или null
      */
     getSelectedProduct(): IProduct | null {
-        return this._selectedProduct;
+        return this.selectedProduct;
     }
 }

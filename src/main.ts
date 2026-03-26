@@ -64,23 +64,25 @@ console.log('✓ После очистки корзины, товаров в к�
 // 3. Тестирование модели покупателя (BuyerModel)
 console.log('\n3. Тестирование BuyerModel:');
 
-// Сохранение данных по отдельности
-buyerModel.setPayment('card');
-buyerModel.setAddress('г. Москва, ул. Ленина, д. 1');
+// Сохранение данных через setData (способ оплаты и адрес)
+buyerModel.setData({
+    payment: 'card',
+    address: 'г. Москва, ул. Ленина, д. 1'
+});
 console.log('✓ Сохранен способ оплаты и адрес');
+console.log('✓ Текущие данные покупателя:', buyerModel.getData());
 
-// Проверка валидации первого шага
-console.log('✓ Валидация первого шага (должна быть true):', buyerModel.validateFirstStep());
+// Проверка валидации (теперь все поля проверяются через единый метод)
+console.log('✓ Результат валидации после сохранения payment и address:', buyerModel.validate());
 
-// Сохранение остальных данных
-buyerModel.setEmail('test@example.com');
-buyerModel.setPhone('+7 999 123-45-67');
+// Сохранение остальных данных (email и телефон)
+buyerModel.setData({
+    email: 'test@example.com',
+    phone: '+7 999 123-45-67'
+});
 console.log('✓ Сохранены email и телефон');
 
-// Проверка валидации второго шага
-console.log('✓ Валидация второго шага (должна быть true):', buyerModel.validateSecondStep());
-
-// Получение всех данных
+// Получение всех данных через getData
 console.log('✓ Все данные покупателя:', buyerModel.getData());
 
 // Проверка полной валидации (пустой объект - нет ошибок)
@@ -90,7 +92,7 @@ console.log('✓ Результат полной валидации (пусто�
 buyerModel.clear();
 console.log('✓ После очистки, данные покупателя:', buyerModel.getData());
 
-// Проверка валидации после очистки
+// Проверка валидации после очистки (должны быть ошибки)
 console.log('✓ Валидация после очистки (должны быть ошибки):', buyerModel.validate());
 
 console.log('\n=== ТЕСТИРОВАНИЕ МОДЕЛЕЙ ЗАВЕРШЕНО ===');

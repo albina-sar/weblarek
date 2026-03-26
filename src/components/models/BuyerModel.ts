@@ -1,5 +1,4 @@
-// src/components/models/BuyerModel.ts
-import { IBuyer, TPayment } from '../../types';
+import { IBuyer, TPayment, TValidationErrors } from '../../types';
 
 /**
  * Модель для хранения данных покупателя
@@ -7,52 +6,20 @@ import { IBuyer, TPayment } from '../../types';
  */
 export class BuyerModel {
     // Приватные поля для хранения данных
-    private _payment: TPayment | null = null;
-    private _email: string = '';
-    private _phone: string = '';
-    private _address: string = '';
+    private payment: TPayment | null = null;
+    private email: string = '';
+    private phone: string = '';
+    private address: string = '';
 
     /**
-     * Сохраняет способ оплаты
-     * @param payment - способ оплаты ('card' или 'cash')
-     */
-    setPayment(payment: TPayment): void {
-        this._payment = payment;
-    }
-
-    /**
-     * Сохраняет email
-     * @param email - email пользователя
-     */
-    setEmail(email: string): void {
-        this._email = email;
-    }
-
-    /**
-     * Сохраняет телефон
-     * @param phone - номер телефона
-     */
-    setPhone(phone: string): void {
-        this._phone = phone;
-    }
-
-    /**
-     * Сохраняет адрес
-     * @param address - адрес доставки
-     */
-    setAddress(address: string): void {
-        this._address = address;
-    }
-
-    /**
-     * Сохраняет все данные покупателя
+     * Сохраняет данные покупателя
      * @param data - частичные данные покупателя
      */
     setData(data: Partial<IBuyer>): void {
-        if (data.payment !== undefined) this._payment = data.payment;
-        if (data.email !== undefined) this._email = data.email;
-        if (data.phone !== undefined) this._phone = data.phone;
-        if (data.address !== undefined) this._address = data.address;
+        if (data.payment !== undefined) this.payment = data.payment;
+        if (data.email !== undefined) this.email = data.email;
+        if (data.phone !== undefined) this.phone = data.phone;
+        if (data.address !== undefined) this.address = data.address;
     }
 
     /**
@@ -61,10 +28,10 @@ export class BuyerModel {
      */
     getData(): IBuyer {
         return {
-            payment: this._payment as TPayment,
-            email: this._email,
-            phone: this._phone,
-            address: this._address
+            payment: this.payment as TPayment,
+            email: this.email,
+            phone: this.phone,
+            address: this.address
         };
     }
 
@@ -72,85 +39,35 @@ export class BuyerModel {
      * Очищает все данные покупателя
      */
     clear(): void {
-        this._payment = null;
-        this._email = '';
-        this._phone = '';
-        this._address = '';
+        this.payment = null;
+        this.email = '';
+        this.phone = '';
+        this.address = '';
     }
 
     /**
      * Проверяет валидность данных покупателя
      * @returns объект с ошибками валидации
      */
-    validate(): Partial<Record<keyof IBuyer, string>> {
-        const errors: Partial<Record<keyof IBuyer, string>> = {};
+    validate(): TValidationErrors {
+        const errors: TValidationErrors = {};
 
-        if (!this._payment) {
+        if (!this.payment) {
             errors.payment = 'Не выбран способ оплаты';
         }
 
-        if (!this._address.trim()) {
+        if (!this.address.trim()) {
             errors.address = 'Укажите адрес доставки';
         }
 
-        if (!this._email.trim()) {
+        if (!this.email.trim()) {
             errors.email = 'Укажите email';
-        } else if (!this._email.includes('@')) {
-            errors.email = 'Некорректный email';
         }
 
-        if (!this._phone.trim()) {
+        if (!this.phone.trim()) {
             errors.phone = 'Укажите телефон';
         }
 
         return errors;
-    }
-
-    /**
-     * Проверяет валидность полей для первого шага оформления
-     * @returns true, если поля первого шага валидны
-     */
-    validateFirstStep(): boolean {
-        return !!(this._payment && this._address.trim());
-    }
-
-    /**
-     * Проверяет валидность полей для второго шага оформления
-     * @returns true, если поля второго шага валидны
-     */
-    validateSecondStep(): boolean {
-        return !!(this._email.trim() && this._phone.trim());
-    }
-
-    /**
-     * Возвращает способ оплаты
-     * @returns способ оплаты или null
-     */
-    getPayment(): TPayment | null {
-        return this._payment;
-    }
-
-    /**
-     * Возвращает email
-     * @returns email
-     */
-    getEmail(): string {
-        return this._email;
-    }
-
-    /**
-     * Возвращает телефон
-     * @returns телефон
-     */
-    getPhone(): string {
-        return this._phone;
-    }
-
-    /**
-     * Возвращает адрес
-     * @returns адрес
-     */
-    getAddress(): string {
-        return this._address;
     }
 }
