@@ -1,5 +1,4 @@
-// Хорошая практика даже простые типы выносить в алиасы
-// Зато когда захотите поменять это достаточно сделать в одном месте
+// src/components/base/Events.ts
 type EventName = string | RegExp;
 type Subscriber = Function;
 type EmitterEvent = {
@@ -15,8 +14,6 @@ export interface IEvents {
 
 /**
  * Брокер событий, классическая реализация
- * В расширенных вариантах есть возможность подписаться на все события
- * или слушать события по шаблону например
  */
 export class EventEmitter implements IEvents {
     _events: Map<EventName, Set<Subscriber>>;
@@ -88,4 +85,3 @@ export class EventEmitter implements IEvents {
         };
     }
 }
-
