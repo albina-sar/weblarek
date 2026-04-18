@@ -3,50 +3,104 @@
 
 .header {
   height: $headerHeight;
+  max-width: 1920px;
+  margin: 0 auto;
   background-color: $primary;
+  position: relative;
 
   &__container {
-    @include mixins.container(45px,45px);
+    @include mixins.container(45px, 45px);
     @include mixins.flex(row);
     align-items: center;
     justify-content: space-between;
+    max-width: $maxPageWidth;
+    margin: 0 auto;
+    height: 100%;
   }
 
   &__logo {
-    height: $headerElementsSize;
-  }
-
-  &__logo {
+    width: 200px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    
     &-image {
       display: block;
+      width: 100%;
       height: 100%;
+      object-fit: contain;
     }
   }
 
   &__basket {
-    //@include mixins.icon($headerElementsSize, 'basket-2');
     @include mixins.link($primary, $hover);
     background-image: url(../images/shopping_cart.svg);
-    height: 58px;
-    width: 58px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 61px;
+    height: 63px;
     border: none;
     position: relative;
     cursor: pointer;
+    background-color: transparent;
 
     &-counter {
       position: absolute;
       display: flex;
       justify-content: center;
       align-items: center;
-      top: 0;
-      right: -0.2rem;
-      width: 0.8rem;
-      height: 0.8rem;
-      font-size: 0.5rem;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
       background-color: $category1;
       color: $background;
-      border-radius: 100%;
+      border-radius: 50%;
       font-weight: 600;
+    }
+  }
+}
+
+// Адаптация для планшетов
+@media (max-width: 1400px) {
+  .header {
+    height: 150px;
+    
+    &__logo {
+      width: 160px;
+      height: 72px;
+    }
+    
+    &__basket {
+      width: 50px;
+      height: 52px;
+    }
+  }
+}
+
+// Адаптация для мобильных устройств
+@media (max-width: 768px) {
+  .header {
+    height: 120px;
+    
+    &__logo {
+      width: 120px;
+      height: 54px;
+    }
+    
+    &__basket {
+      width: 40px;
+      height: 42px;
+    }
+    
+    &__basket-counter {
+      width: 20px;
+      height: 20px;
+      font-size: 10px;
+      top: -6px;
+      right: -6px;
     }
   }
 }

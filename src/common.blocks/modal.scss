@@ -3,68 +3,232 @@
 
 .modal {
   @include mixins.sublayer;
-  // height: max-content;
   display: none;
   justify-content: center;
+  align-items: center;
   background-color: $overlayBackground;
   z-index: 100;
-  padding-top: 5vh;
-  padding-bottom: 5vh;
+  padding: 20px;
   box-sizing: border-box;
+  overflow: hidden;
 
   &_active {
     display: flex;
   }
 
   &__container {
-    @include mixins.container;
     @include mixins.flex(column);
     gap: $defaultPadding;
     background-color: $background;
-    // min-height: 90vmin;
-    border-radius: 3rem;
+    border-radius: 60px;
     box-sizing: border-box;
     position: relative;
+    max-width: 1320px;
+    width: 100%;
+    max-height: calc(100vh - 40px);
+    overflow: hidden;
+    padding: 48px;
   }
 
   &__content {
     flex-grow: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: $primaryLight;
+      border-radius: 4px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: $hover;
+      border-radius: 4px;
+    }
   }
 
   &__title {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 400;
+    margin: 0 0 24px 0;
+    font-size: 1.8rem;
+    font-weight: 500;
+    color: white;
   }
 
   &__actions {
     @include mixins.flex(row);
     align-items: center;
+    justify-content: space-between;
     gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid $primaryLight;
   }
 
   &__close {
     position: absolute;
-    top: calc(#{$defaultPadding} / 2);
-    right: calc(#{$defaultPadding} / 2);
-    @include mixins.icon(2rem, 'close');
+    top: 24px;
+    right: 24px;
+    @include mixins.icon(28px, 'close');
     @include mixins.link(white, $hover);
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.9);
+      transform: scale(1.05);
+    }
   }
 
   &__footer {
     @include mixins.flex(row);
     align-items: center;
     gap: 2rem;
+    flex-wrap: wrap;
   }
 
   &__message {
-    white-space:nowrap;
-    max-width: 60%;
+    white-space: normal;
+    max-width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
 
     &_error {
       color: $error;
+    }
+  }
+}
+
+// Специальные стили для корзины
+.basket-modal {
+  .modal__container {
+    max-width: 1320px;
+    min-height: 600px;
+  }
+}
+
+// Стили для форм заказа
+.order-modal {
+  .modal__container {
+    max-width: 1320px;
+    min-height: 600px;
+  }
+}
+
+// Запрет скролла на body при открытом модальном окне
+body.modal_active {
+  overflow: hidden;
+  padding-right: var(--scrollbar-width, 0px);
+}
+
+// Адаптация для планшетов
+@media (max-width: 1400px) {
+  .modal {
+    &__container {
+      max-width: 1100px;
+      padding: 40px;
+    }
+    
+    &__title {
+      font-size: 1.6rem;
+    }
+  }
+}
+
+// Адаптация для мобильных
+@media (max-width: 1024px) {
+  .modal {
+    padding: 15px;
+    
+    &__container {
+      max-width: 90%;
+      padding: 32px;
+      border-radius: 40px;
+    }
+    
+    &__title {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+    
+    &__close {
+      top: 16px;
+      right: 16px;
+      width: 36px;
+      height: 36px;
+      
+      &::before {
+        font-size: 18px;
+      }
+    }
+  }
+}
+
+// Для мобильных устройств
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+    
+    &__container {
+      max-width: 95%;
+      padding: 24px;
+      border-radius: 30px;
+      max-height: calc(100vh - 20px);
+    }
+    
+    &__title {
+      font-size: 1.2rem;
+      margin-bottom: 16px;
+    }
+    
+    &__actions {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 16px;
+      margin-top: 20px;
+      padding-top: 20px;
+    }
+    
+    &__close {
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+// Для очень маленьких экранов
+@media (max-width: 480px) {
+  .modal {
+    padding: 8px;
+    
+    &__container {
+      padding: 20px;
+      border-radius: 24px;
+    }
+    
+    &__title {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    
+    &__close {
+      top: 10px;
+      right: 10px;
+      width: 28px;
+      height: 28px;
     }
   }
 }

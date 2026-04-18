@@ -3,15 +3,56 @@
 
 .gallery {
   @include mixins.container;
-  @include mixins.grid(600px, 24px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $gridGap;
+  max-width: $maxPageWidth;
+  margin: 260px auto 0;
+  padding: 0 $defaultPadding;
 
   &__item {
     border: none;
     border-radius: $defaultBorderRadius;
     @include mixins.selectable($secondary, 2px, $primaryLight);
+    width: 100%;
+    max-width: $cardWidth;
+    margin: 0 auto;
 
     &::after {
       border-radius: 0.8rem;
     }
+  }
+}
+
+// Для экранов меньше ширины двух карточек
+@media (max-width: 1400px) {
+  .gallery {
+    margin-top: 200px;
+    gap: 20px;
+  }
+}
+
+// Для планшетов - все еще две колонки
+@media (max-width: 1024px) {
+  .gallery {
+    gap: 16px;
+    margin-top: 180px;
+  }
+}
+
+// Для мобильных устройств - переключаем на одну колонку
+@media (max-width: 768px) {
+  .gallery {
+    margin-top: 150px;
+    gap: 16px;
+    grid-template-columns: 1fr;
+  }
+}
+
+// Для очень маленьких экранов
+@media (max-width: 480px) {
+  .gallery {
+    margin-top: 120px;
+    gap: 12px;
   }
 }

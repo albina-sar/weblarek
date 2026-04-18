@@ -3,16 +3,122 @@
 
 .order {
   @include mixins.flex(column);
-  gap: 4rem;
-  margin-bottom: 4rem;
+  gap: 2rem;
 
   &__field {
     @include mixins.flex(column);
-    gap: 1.5rem;
+    gap: 1rem;
   }
 
   &__buttons {
     @include mixins.flex(row);
     gap: 1.5rem;
+    
+    .button {
+      flex: 1;
+      padding: 1rem;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Стили для форм
+.form {
+  @include mixins.flex(column);
+  gap: 2rem;
+
+  &__label {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  &__input {
+    background: transparent;
+    color: white;
+    border: $defaultBorder;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    font-size: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    outline-color: $secondary;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline-style: solid;
+      border-color: $hover;
+    }
+
+    &:invalid {
+      border-color: $error;
+      outline-color: $error;
+    }
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  
+  &__errors {
+    color: $error;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: block;
+    text-align: center;
+  }
+}
+
+// Адаптация для планшетов
+@media (max-width: 1024px) {
+  .order {
+    gap: 1.5rem;
+    
+    &__buttons {
+      gap: 1rem;
+      
+      .button {
+        padding: 0.8rem;
+      }
+    }
+  }
+  
+  .form {
+    gap: 1.5rem;
+    
+    &__input {
+      padding: 0.8rem;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+// Адаптация для мобильных
+@media (max-width: 768px) {
+  .order {
+    gap: 1.2rem;
+    
+    &__buttons {
+      flex-direction: column;
+      gap: 0.8rem;
+      
+      .button {
+        padding: 0.7rem;
+      }
+    }
+  }
+  
+  .form {
+    gap: 1.2rem;
+    
+    &__input {
+      padding: 0.7rem;
+      font-size: 0.9rem;
+    }
+    
+    &__errors {
+      font-size: 0.8rem;
+    }
   }
 }

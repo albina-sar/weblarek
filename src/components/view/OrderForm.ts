@@ -1,76 +1,80 @@
-// src/components/view/OrderForm.ts
-import { Form } from './Form';
-import { TPayment } from '../../types';
+import { Component } from "../base/Component";
+import { IEvents } from "../base/Events";
+import { TPayment } from "../../types";
 
-/**
- * Форма оформления заказа (первый шаг)
- */
-export class OrderForm extends Form<{ address: string; payment: TPayment }> {
-    private _paymentButtons: NodeListOf<HTMLButtonElement>;
-    private _addressInput: HTMLInputElement;
-    private _selectedPayment: TPayment | null = null;
+export class OrderForm extends Component<{
+  address: string;
+  payment: TPayment;
+  errors: string;
+}> {
+  protected addressInput: HTMLInputElement;
+  protected cardButton: HTMLButtonElement;
+  protected cashButton: HTMLButtonElement;
+  protected submitButton: HTMLButtonElement;
+  protected errorsElement: HTMLElement;
+  protected form: HTMLFormElement;
 
-    constructor(container: HTMLFormElement, onSubmit: (data: { address: string; payment: TPayment }) => void) {
-        super(container);
-        this._paymentButtons = container.querySelectorAll('.order__buttons button');
-        this._addressInput = container.querySelector('input[name="address"]') as HTMLInputElement;
-        this._onSubmit = onSubmit;
-        
-        this._paymentButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const payment = button.name as TPayment;
-                this._selectedPayment = payment;
-                this.updatePaymentButtons(payment);
-                this.checkValidity();
-            });
-        });
-        
-        if (this._addressInput) {
-            this._addressInput.addEventListener('input', () => {
-                this.checkValidity();
-            });
-        }
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+  ) {
+    super(container);
+    this.form = container as HTMLFormElement;
+    this.addressInput = container.querySelector(
+      'input[name="address"]',
+    ) as HTMLInputElement;
+    this.cardButton = container.querySelector(
+      'button[name="card"]',
+    ) as HTMLButtonElement;
+    this.cashButton = container.querySelector(
+      'button[name="cash"]',
+    ) as HTMLButtonElement;
+    this.submitButton = container.querySelector(
+      ".order__button",
+    ) as HTMLButtonElement;
+    this.errorsElement = container.querySelector(
+      ".form__errors",
+    ) as HTMLElement;
+
+    this.addressInput.addEventListener("input", () => {
+      this.events.emit("order:changeAddress", {
+        address: this.addressInput.value,
+      });
+    });
+
+    this.cardButton.addEventListener("click", () => {
+      this.events.emit("order:changePayment", { payment: "card" });
+    });
+
+    this.cashButton.addEventListener("click", () => {
+      this.events.emit("order:changePayment", { payment: "cash" });
+    });
+
+    this.form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      this.events.emit("order:submit");
+    });
+  }
+
+  set address(value: string) {
+    this.addressInput.value = value;
+  }
+
+  set payment(value: TPayment) {
+    if (value === "card") {
+      this.cardButton.classList.add("button_alt-active");
+      this.cashButton.classList.remove("button_alt-active");
+    } else if (value === "cash") {
+      this.cashButton.classList.add("button_alt-active");
+      this.cardButton.classList.remove("button_alt-active");
     }
+  }
 
-    private updatePaymentButtons(selected: TPayment) {
-        this._paymentButtons.forEach(button => {
-            if (button.name === selected) {
-                button.classList.add('button_alt-active');
-            } else {
-                button.classList.remove('button_alt-active');
-            }
-        });
-    }
+  set errors(value: string) {
+    this.errorsElement.textContent = value;
+  }
 
-    private checkValidity() {
-        const isValid = this._selectedPayment !== null && this._addressInput && this._addressInput.value.trim() !== '';
-        this.valid = isValid;
-    }
-
-    protected onInputChange(field: keyof { address: string; payment: TPayment }, _value: string): void {
-        if (field === 'address') {
-            this.checkValidity();
-        }
-    }
-
-    private _onSubmit: (data: { address: string; payment: TPayment }) => void;
-
-    protected onSubmit(): void {
-        if (this._selectedPayment && this._addressInput && this._addressInput.value.trim()) {
-            this._onSubmit({
-                address: this._addressInput.value,
-                payment: this._selectedPayment
-            });
-        }
-    }
-
-    set address(value: string) {
-        if (this._addressInput) this._addressInput.value = value;
-    }
-
-    set payment(value: TPayment) {
-        this._selectedPayment = value;
-        this.updatePaymentButtons(value);
-        this.checkValidity();
-    }
+  set valid(value: boolean) {
+    this.submitButton.disabled = !value;
+  }
 }

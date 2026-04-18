@@ -1,17 +1,45 @@
 @use "variables" as *;
 
 html, body.page {
-	height: 100%;
-	font-family: $font;
-	font-size: $baseFontSize;
-	color: $baseFontColor;
-	background: $background;
+    height: 100%;
+    font-family: $font;
+    font-size: $baseFontSize;
+    color: $baseFontColor;
+    background: $background;
 }
 
-.page__wrapper {
-	width: 100%;
+.page {
+    &__wrapper {
+        width: 100%;
+        max-width: 1920px;
+        margin: 0 auto;
+    }
 }
 
-.page:has(.modal_active) {
-	overflow: hidden;
+// Стили для body при открытом модальном окне
+body {
+    &.modal_active {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+}
+
+// Адаптация для разных разрешений
+@media (max-width: 1400px) {
+    body.page {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px) {
+    body.page {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    body.page {
+        font-size: 14px;
+    }
 }

@@ -1,26 +1,28 @@
-// src/components/view/Success.ts
-import { Component } from '../base/Component';
+import { Component } from "../base/Component";
+import { IEvents } from "../base/Events";
 
-/**
- * Компонент успешного оформления заказа
- */
 export class Success extends Component<{ total: number }> {
-    private _description: HTMLElement;
-    private _closeButton: HTMLButtonElement;
+  protected descriptionElement: HTMLElement;
+  protected buttonElement: HTMLButtonElement;
 
-    constructor(container: HTMLElement, onClose: () => void) {
-        super(container);
-        this._description = container.querySelector('.order-success__description') as HTMLElement;
-        this._closeButton = container.querySelector('.order-success__close') as HTMLButtonElement;
-        
-        if (this._closeButton) {
-            this._closeButton.addEventListener('click', onClose);
-        }
-    }
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+  ) {
+    super(container);
+    this.descriptionElement = container.querySelector(
+      ".order-success__description",
+    ) as HTMLElement;
+    this.buttonElement = container.querySelector(
+      ".order-success__close",
+    ) as HTMLButtonElement;
 
-    set total(value: number) {
-        if (this._description) {
-            this._description.textContent = `Списано ${value} синапсов`;
-        }
-    }
+    this.buttonElement.addEventListener("click", () => {
+      this.events.emit("success:close");
+    });
+  }
+
+  set total(value: number) {
+    this.descriptionElement.textContent = `Списано ${value} синапсов`;
+  }
 }

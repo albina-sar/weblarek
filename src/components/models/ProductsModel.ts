@@ -1,39 +1,31 @@
-// src/components/models/ProductsModel.ts
-import { IProduct } from '../../types';
-import { EventEmitter } from '../base/Events';
+import { IProduct } from "../../types";
+import { IEvents } from "../base/Events";
 
-/**
- * Модель для хранения каталога товаров
- * Отвечает за хранение и управление данными о товарах в каталоге
- */
 export class ProductsModel {
-    private items: IProduct[] = [];
-    private selectedProduct: IProduct | null = null;
-    private events: EventEmitter;
+  private items: IProduct[] = [];
+  private selectedProduct: IProduct | null = null;
 
-    constructor(events: EventEmitter) {
-        this.events = events;
-    }
+  constructor(protected events?: IEvents) {}
 
-    setItems(items: IProduct[]): void {
-        this.items = items;
-        this.events.emit('products:changed', { products: this.items });
-    }
+  setItems(items: IProduct[]): void {
+    this.items = items;
+    this.events?.emit("products:changed", this.items);
+  }
 
-    getItems(): IProduct[] {
-        return this.items;
-    }
+  getItems(): IProduct[] {
+    return this.items;
+  }
 
-    getProductById(id: string): IProduct | undefined {
-        return this.items.find(item => item.id === id);
-    }
+  getProductById(id: string): IProduct | undefined {
+    return this.items.find((item) => item.id === id);
+  }
 
-    setSelectedProduct(product: IProduct): void {
-        this.selectedProduct = product;
-        this.events.emit('selectedProduct:changed', { product: this.selectedProduct });
-    }
+  setSelectedProduct(product: IProduct): void {
+    this.selectedProduct = product;
+    this.events?.emit("products:selected", product);
+  }
 
-    getSelectedProduct(): IProduct | null {
-        return this.selectedProduct;
-    }
+  getSelectedProduct(): IProduct | null {
+    return this.selectedProduct;
+  }
 }

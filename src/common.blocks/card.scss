@@ -7,16 +7,99 @@
   border-radius: $defaultBorderRadius;
   background-color: $primary;
   color: white;
-  padding: $defaultPadding;
+  padding: $cardContentPadding;
   align-items: flex-start;
+  width: 100%;
+  max-width: $cardWidth;
+  margin: 0 auto;
+  box-sizing: border-box;
+  position: relative;
 
+  // Стиль для модального окна (preview) - УМЕНЬШЕННЫЕ РАЗМЕРЫ
   &_full {
     flex-direction: row;
-    background-color: transparent;
-    align-items: center;
+    background-color: $primary;
+    align-items: stretch;
+    max-width: 1100px;
+    width: 100%;
+    min-height: 540px;
+    padding: 0;
+    gap: 0;
+    overflow: hidden;
+
+    .card__image {
+      width: 45%;
+      height: auto;
+      max-height: 540px;
+      object-fit: contain;
+      margin: 0;
+      padding: 40px;
+      background-color: $primary;
+      box-sizing: border-box;
+    }
+
+    .card__column {
+      @include mixins.flex(column);
+      width: 55%;
+      padding: 48px 40px;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      box-sizing: border-box;
+    }
 
     .card__title {
+      font-size: 2.2rem;
+      margin: 0;
       flex-grow: 0;
+    }
+
+    .card__text {
+      font-size: 1.1rem;
+      line-height: 1.5;
+      margin: 0;
+      flex-grow: 1;
+      overflow-y: auto;
+      max-height: 200px;
+      
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: $primaryLight;
+        border-radius: 2px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background: $hover;
+        border-radius: 2px;
+      }
+    }
+
+    .card__row {
+      @include mixins.flex(row);
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .card__price {
+      font-size: 1.3rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .card__button {
+      padding: 0.8rem 1.8rem;
+      font-size: 0.95rem;
+    }
+
+    .card__category {
+      margin-bottom: 0;
+      font-size: 0.85rem;
     }
   }
 
@@ -25,6 +108,9 @@
     background-color: transparent;
     align-items: center;
     border-radius: 0;
+    padding: 1.5rem 0;
+    min-height: auto;
+    max-width: none;
 
     .card__title {
       flex-grow: 1;
@@ -34,36 +120,48 @@
   &__column {
     @include mixins.flex(column);
     align-items: flex-start;
-    height: 390px;
+    height: auto;
+    flex: 1;
   }
 
   &__row {
     @include mixins.flex(row);
     align-items: center;
     gap: $defaultPadding;
+    flex-wrap: wrap;
   }
 
   &__image {
-    height: 390px;
+    width: $cardImageSize;
+    max-width: 100%;
+    height: auto;
     aspect-ratio: 1;
-    margin: 3.75rem;
+    margin: 0 auto;
     align-self: center;
+    object-fit: contain;
   }
+  
   &__title {
     font-size: $titleFontSize;
     font-weight: 500;
     margin: 0;
     flex-grow: 1;
+    word-break: break-word;
   }
+  
   &__text {
     text-align: left;
     flex-grow: 1;
+    line-height: 1.4;
   }
+  
   &__category {
     padding: 0.5rem 1.25rem;
     border-radius: 2.5rem;
     margin-bottom: 12px;
     color: $primary;
+    display: inline-block;
+    font-size: 0.9rem;
 
     &_soft {
       background-color: $category1;
@@ -81,8 +179,132 @@
       background-color: $category4;
     }
   }
-  &__action {
-  }
+  
   &__price {
+    font-size: 1.2rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  &__button {
+    white-space: nowrap;
+  }
+}
+
+// Адаптация для планшетов
+@media (max-width: 1200px) {
+  .card {
+    &_full {
+      flex-direction: column;
+      min-height: auto;
+      max-width: 700px;
+      
+      .card__image {
+        width: 100%;
+        max-height: 350px;
+        padding: 30px;
+      }
+      
+      .card__column {
+        width: 100%;
+        padding: 30px;
+      }
+      
+      .card__title {
+        font-size: 1.8rem;
+      }
+      
+      .card__text {
+        font-size: 1rem;
+        max-height: 150px;
+      }
+      
+      .card__price {
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+// Адаптация для мобильных устройств
+@media (max-width: 768px) {
+  .card {
+    padding: 20px;
+    
+    &__image {
+      width: 180px;
+    }
+    
+    &__title {
+      font-size: 1.3rem;
+    }
+    
+    &_full {
+      max-width: 95%;
+      
+      .card__image {
+        padding: 20px;
+        max-height: 250px;
+      }
+      
+      .card__column {
+        padding: 20px;
+        gap: 16px;
+      }
+      
+      .card__title {
+        font-size: 1.3rem;
+      }
+      
+      .card__text {
+        font-size: 0.9rem;
+        max-height: 120px;
+      }
+      
+      .card__row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .card__price {
+        text-align: center;
+        white-space: normal;
+      }
+      
+      .card__button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// Для очень маленьких экранов
+@media (max-width: 480px) {
+  .card {
+    padding: 16px;
+    
+    &__image {
+      width: 150px;
+    }
+    
+    &_full {
+      .card__image {
+        padding: 16px;
+        max-height: 200px;
+      }
+      
+      .card__column {
+        padding: 16px;
+      }
+      
+      .card__title {
+        font-size: 1.1rem;
+      }
+      
+      .card__text {
+        font-size: 0.85rem;
+        max-height: 100px;
+      }
+    }
   }
 }

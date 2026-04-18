@@ -4,27 +4,52 @@
 .basket {
   @include mixins.flex(column);
   gap: 2rem;
-  height: 60vh;
+  min-height: 500px;
 
   &__list {
-    padding: 0 2rem 0 0;
+    padding: 0;
     margin: 0;
     flex-grow: 1;
     overflow-y: auto;
+    max-height: 500px;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $primaryLight;
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $hover;
+      border-radius: 4px;
+    }
   }
-  
+
   &__list:not(:has(> *))::before {
-    content: 'Корзина пуста';
+    content: "Корзина пуста";
     opacity: 0.3;
     display: block;
-    text-align: left;
+    text-align: center;
     font-style: regular;
     font-weight: 400;
+    padding: 40px;
+    font-size: 1.2rem;
   }
 
   &__item {
     border-bottom: 1px solid $primary;
     padding: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    &:last-child {
+      border-bottom: none;
+    }
 
     &-index {
       @include mixins.flex(row);
@@ -37,13 +62,90 @@
       background-color: $primary;
       color: white;
       margin-right: 1rem;
+      flex-shrink: 0;
     }
 
     &-delete {
-      @include mixins.icon(2rem, 'trash');
+      @include mixins.icon(2rem, "trash");
       @include mixins.link($hover, white);
       opacity: 0.5;
-      margin-left: 4rem;
+      margin-left: auto;
+      flex-shrink: 0;
+      transition: opacity 0.3s ease;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $category1;
+  }
+
+  &__button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    min-width: 200px;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Адаптация для планшетов
+@media (max-width: 1024px) {
+  .basket {
+    min-height: 400px;
+
+    &__list {
+      max-height: 400px;
+    }
+
+    &__price {
+      font-size: 1.3rem;
+    }
+
+    &__button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      min-width: 180px;
+    }
+  }
+}
+
+// Адаптация для мобильных
+@media (max-width: 768px) {
+  .basket {
+    gap: 1.5rem;
+    min-height: 350px;
+
+    &__list {
+      max-height: 350px;
+    }
+
+    &__item {
+      padding: 1rem 0;
+
+      &-index {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+      }
+    }
+
+    &__price {
+      font-size: 1.1rem;
+    }
+
+    &__button {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+      min-width: 150px;
     }
   }
 }
