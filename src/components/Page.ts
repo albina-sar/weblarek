@@ -1,5 +1,5 @@
-import { Component } from "../base/Component";
-import { IEvents } from "../base/Events";
+import { Component } from "./base/Component";
+import { IEvents } from "./base/Events";
 
 export class Page extends Component<{
   counter: number;

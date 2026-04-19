@@ -5,6 +5,7 @@ export class Modal extends Component<{ content: HTMLElement }> {
   protected closeButton: HTMLElement;
   protected contentContainer: HTMLElement;
   protected scrollbarWidth: number = 0;
+  protected escKeyHandler: (e: KeyboardEvent) => void;
 
   constructor(
     container: HTMLElement,
@@ -23,25 +24,13 @@ export class Modal extends Component<{ content: HTMLElement }> {
       }
     });
 
-    this.calculateScrollbarWidth();
-
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "Escape" &&
-        this.container.classList.contains("modal_active")
-      ) {
-        this.close();
-      }
-    });
+    this.escKeyHandler = this.closeByEsc.bind(this);
   }
 
-  protected calculateScrollbarWidth(): void {
-    const scrollDiv = document.createElement("div");
-    scrollDiv.style.cssText =
-      "width: 100px; height: 100px; overflow: scroll; position: absolute; top: -9999px;";
-    document.body.appendChild(scrollDiv);
-    this.scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
-    document.body.removeChild(scrollDiv);
+  protected closeByEsc(e: KeyboardEvent): void {
+    if (e.key === "Escape") {
+      this.close();
+    }
   }
 
   set content(value: HTMLElement) {
@@ -59,16 +48,15 @@ export class Modal extends Component<{ content: HTMLElement }> {
   open() {
     this.container.classList.add("modal_active");
     document.body.classList.add("modal_active");
-    document.body.style.paddingRight = `${this.scrollbarWidth}px`;
+    document.addEventListener("keydown", this.escKeyHandler);
   }
 
   close() {
     this.container.classList.remove("modal_active");
     document.body.classList.remove("modal_active");
-    document.body.style.paddingRight = "";
     this.contentContainer.innerHTML = "";
-    // Удаляем дополнительные классы
     this.container.classList.remove("basket-modal", "order-modal");
+    document.removeEventListener("keydown", this.escKeyHandler);
     this.events.emit("modal:closed");
   }
 

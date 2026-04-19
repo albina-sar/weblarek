@@ -1,35 +1,26 @@
-import { Component } from "../base/Component";
+import { Form } from "./Form";
 import { IEvents } from "../base/Events";
 
-export class ContactsForm extends Component<{
+interface IContactsFormData {
   email: string;
   phone: string;
-  errors: string;
-}> {
+}
+
+export class ContactsForm extends Form<IContactsFormData> {
   protected emailInput: HTMLInputElement;
   protected phoneInput: HTMLInputElement;
-  protected submitButton: HTMLButtonElement;
-  protected errorsElement: HTMLElement;
-  protected form: HTMLFormElement;
 
   constructor(
     container: HTMLElement,
     protected events: IEvents,
   ) {
-    super(container);
-    this.form = container as HTMLFormElement;
+    super(container, events);
     this.emailInput = container.querySelector(
       'input[name="email"]',
     ) as HTMLInputElement;
     this.phoneInput = container.querySelector(
       'input[name="phone"]',
     ) as HTMLInputElement;
-    this.submitButton = container.querySelector(
-      'button[type="submit"]',
-    ) as HTMLButtonElement;
-    this.errorsElement = container.querySelector(
-      ".form__errors",
-    ) as HTMLElement;
 
     this.emailInput.addEventListener("input", () => {
       this.events.emit("contacts:changeEmail", {
@@ -42,11 +33,10 @@ export class ContactsForm extends Component<{
         phone: this.phoneInput.value,
       });
     });
+  }
 
-    this.form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.events.emit("contacts:submit");
-    });
+  protected getFormName(): string {
+    return "contacts";
   }
 
   set email(value: string) {
@@ -55,13 +45,5 @@ export class ContactsForm extends Component<{
 
   set phone(value: string) {
     this.phoneInput.value = value;
-  }
-
-  set errors(value: string) {
-    this.errorsElement.textContent = value;
-  }
-
-  set valid(value: boolean) {
-    this.submitButton.disabled = !value;
   }
 }

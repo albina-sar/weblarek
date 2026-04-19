@@ -19,7 +19,7 @@ export class BuyerModel {
 
   getData(): IBuyer {
     return {
-      payment: this.payment as TPayment,
+      payment: this.payment,
       email: this.email,
       phone: this.phone,
       address: this.address,
@@ -41,19 +41,5 @@ export class BuyerModel {
     if (!this.email.trim()) errors.email = "Укажите email";
     if (!this.phone.trim()) errors.phone = "Укажите телефон";
     return errors;
-  }
-
-  validateOrder(): { valid: boolean; errors: string } {
-    const errors: string[] = [];
-    if (!this.payment) errors.push("Выберите способ оплаты");
-    if (!this.address.trim()) errors.push("Укажите адрес доставки");
-    return { valid: errors.length === 0, errors: errors.join(", ") };
-  }
-
-  validateContacts(): { valid: boolean; errors: string } {
-    const errors: string[] = [];
-    if (!this.email.trim()) errors.push("Укажите email");
-    if (!this.phone.trim()) errors.push("Укажите телефон");
-    return { valid: errors.length === 0, errors: errors.join(", ") };
   }
 }

@@ -1,10 +1,9 @@
 import { Component } from "../base/Component";
-import { IProduct } from "../../types";
+import { TBaseCard } from "../../types";
 
-/**
- * Базовый класс для всех карточек товара
- */
-export abstract class BaseCard extends Component<IProduct> {
+export type TCardData = TBaseCard;
+
+export abstract class BaseCard<T = {}> extends Component<TCardData & T> {
   protected _title: HTMLElement;
   protected _price: HTMLElement;
   protected _category?: HTMLElement;
@@ -81,6 +80,4 @@ export abstract class BaseCard extends Component<IProduct> {
     };
     return categoryMap[category] || "card__category_other";
   }
-
-  abstract set buttonHandler(handler: () => void);
 }

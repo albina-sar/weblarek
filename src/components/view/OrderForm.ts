@@ -1,25 +1,22 @@
-import { Component } from "../base/Component";
+import { Form } from "./Form";
 import { IEvents } from "../base/Events";
 import { TPayment } from "../../types";
 
-export class OrderForm extends Component<{
+interface IOrderFormData {
   address: string;
   payment: TPayment;
-  errors: string;
-}> {
+}
+
+export class OrderForm extends Form<IOrderFormData> {
   protected addressInput: HTMLInputElement;
   protected cardButton: HTMLButtonElement;
   protected cashButton: HTMLButtonElement;
-  protected submitButton: HTMLButtonElement;
-  protected errorsElement: HTMLElement;
-  protected form: HTMLFormElement;
 
   constructor(
     container: HTMLElement,
     protected events: IEvents,
   ) {
-    super(container);
-    this.form = container as HTMLFormElement;
+    super(container, events);
     this.addressInput = container.querySelector(
       'input[name="address"]',
     ) as HTMLInputElement;
@@ -29,12 +26,6 @@ export class OrderForm extends Component<{
     this.cashButton = container.querySelector(
       'button[name="cash"]',
     ) as HTMLButtonElement;
-    this.submitButton = container.querySelector(
-      ".order__button",
-    ) as HTMLButtonElement;
-    this.errorsElement = container.querySelector(
-      ".form__errors",
-    ) as HTMLElement;
 
     this.addressInput.addEventListener("input", () => {
       this.events.emit("order:changeAddress", {
@@ -49,11 +40,10 @@ export class OrderForm extends Component<{
     this.cashButton.addEventListener("click", () => {
       this.events.emit("order:changePayment", { payment: "cash" });
     });
+  }
 
-    this.form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      this.events.emit("order:submit");
-    });
+  protected getFormName(): string {
+    return "order";
   }
 
   set address(value: string) {
@@ -68,13 +58,5 @@ export class OrderForm extends Component<{
       this.cashButton.classList.add("button_alt-active");
       this.cardButton.classList.remove("button_alt-active");
     }
-  }
-
-  set errors(value: string) {
-    this.errorsElement.textContent = value;
-  }
-
-  set valid(value: boolean) {
-    this.submitButton.disabled = !value;
   }
 }
