@@ -26,11 +26,10 @@ export abstract class Form<T> extends Component<IFormData & T> {
 
     this.form.addEventListener("submit", (e) => {
       e.preventDefault();
-      this.events.emit(`${this.getFormName()}:submit`);
+      // Имя формы получаем из разметки form.name
+      this.events.emit(`${this.form.name}:submit`);
     });
   }
-
-  protected abstract getFormName(): string;
 
   set errors(value: string) {
     if (this.errorsElement) {

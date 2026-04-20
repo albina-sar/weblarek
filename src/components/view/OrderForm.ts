@@ -42,10 +42,6 @@ export class OrderForm extends Form<IOrderFormData> {
     });
   }
 
-  protected getFormName(): string {
-    return "order";
-  }
-
   set address(value: string) {
     this.addressInput.value = value;
   }

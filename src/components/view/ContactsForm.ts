@@ -35,10 +35,6 @@ export class ContactsForm extends Form<IContactsFormData> {
     });
   }
 
-  protected getFormName(): string {
-    return "contacts";
-  }
-
   set email(value: string) {
     this.emailInput.value = value;
   }

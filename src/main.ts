@@ -49,19 +49,30 @@ const successTemplate = ensureElement<HTMLTemplateElement>("#success");
 const modal = new Modal(modalContainer, events);
 const page = new Page(pageElement, events);
 let basketComponent: Basket;
-let orderForm: OrderForm;
-let contactsForm: ContactsForm;
+let previewCard: CardPreview; // Создаем один экземпляр превью
 let successComponent: Success;
 
 // Создаем экземпляры форм один раз
 const orderElement = cloneTemplate(orderTemplate);
-orderForm = new OrderForm(orderElement, events);
+const orderForm = new OrderForm(orderElement, events);
 
 const contactsElement = cloneTemplate(contactsTemplate);
-contactsForm = new ContactsForm(contactsElement, events);
+const contactsForm = new ContactsForm(contactsElement, events);
 
 const successElement = cloneTemplate(successTemplate);
 successComponent = new Success(successElement, events);
+
+// Создаем экземпляр корзины один раз
+const basketElement = cloneTemplate(basketTemplate);
+basketComponent = new Basket(basketElement, events);
+
+// Создаем экземпляр превью один раз
+const previewElement = cloneTemplate(cardPreviewTemplate);
+previewCard = new CardPreview(previewElement, {
+  onToggleBasket: () => {
+    // Логика будет переопределяться при открытии
+  },
+});
 
 // Функция для создания карточки каталога
 function createCatalogCard(product: IProduct): HTMLElement {
@@ -75,37 +86,6 @@ function createCatalogCard(product: IProduct): HTMLElement {
   card.price = product.price;
   card.category = product.category;
   card.image = CDN_URL + product.image;
-  return card.render();
-}
-
-// Функция для создания карточки превью
-function createPreviewCard(
-  product: IProduct,
-  isInBasket: boolean,
-): HTMLElement {
-  const cardElement = cloneTemplate(cardPreviewTemplate);
-  const card = new CardPreview(cardElement, {
-    onToggleBasket: () => {
-      if (product.price !== null) {
-        if (isInBasket) {
-          basketModel.removeItem(product.id);
-        } else {
-          basketModel.addItem(product);
-        }
-      }
-    },
-  });
-  card.title = product.title;
-  card.price = product.price;
-  card.category = product.category;
-  card.image = CDN_URL + product.image;
-  card.description = product.description;
-  card.buttonText = isInBasket
-    ? "Удалить из корзины"
-    : product.price === null
-      ? "Недоступно"
-      : "Купить";
-  card.disabled = product.price === null;
   return card.render();
 }
 
@@ -131,14 +111,12 @@ function updateBasketView() {
 
   page.counter = itemsCount;
 
-  if (basketComponent) {
-    const items = basketItems.map((item, index) =>
-      createBasketCard(item, index + 1),
-    );
-    basketComponent.items = items;
-    basketComponent.total = total;
-    basketComponent.disabled = itemsCount === 0;
-  }
+  const items = basketItems.map((item, index) =>
+    createBasketCard(item, index + 1),
+  );
+  basketComponent.items = items;
+  basketComponent.total = total;
+  basketComponent.disabled = itemsCount === 0;
 }
 
 // Функция обновления данных в формах из модели
@@ -192,8 +170,33 @@ events.on("card:select", (product: IProduct) => {
 // Открытие превью (реагируем на изменение выбранного продукта)
 events.on("products:selected", (product: IProduct) => {
   const isInBasket = basketModel.isInBasket(product.id);
-  const previewCard = createPreviewCard(product, isInBasket);
-  modal.render({ content: previewCard });
+
+  // Обновляем контент существующего экземпляра превью
+  previewCard.title = product.title;
+  previewCard.price = product.price;
+  previewCard.category = product.category;
+  previewCard.image = CDN_URL + product.image;
+  previewCard.description = product.description;
+  previewCard.buttonText = isInBasket
+    ? "Удалить из корзины"
+    : product.price === null
+      ? "Недоступно"
+      : "Купить";
+  previewCard.disabled = product.price === null;
+
+  // Переопределяем обработчик кнопки
+  if (product.price !== null) {
+    previewCard.buttonHandler = () => {
+      if (isInBasket) {
+        basketModel.removeItem(product.id);
+      } else {
+        basketModel.addItem(product);
+      }
+      modal.close();
+    };
+  }
+
+  modal.render({ content: previewElement });
 });
 
 // Обновление корзины (реагируем на изменение модели корзины)
@@ -203,8 +206,6 @@ events.on("basket:changed", () => {
 
 // Открытие корзины
 events.on("basket:open", () => {
-  const basketElement = cloneTemplate(basketTemplate);
-  basketComponent = new Basket(basketElement, events);
   updateBasketView();
   modal.render({ content: basketElement, modalClass: "basket-modal" });
 });
