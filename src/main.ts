@@ -49,7 +49,7 @@ const successTemplate = ensureElement<HTMLTemplateElement>("#success");
 const modal = new Modal(modalContainer, events);
 const page = new Page(pageElement, events);
 let basketComponent: Basket;
-let previewCard: CardPreview; // Создаем один экземпляр превью
+let previewCard: CardPreview;
 let successComponent: Success;
 
 // Создаем экземпляры форм один раз
@@ -66,21 +66,15 @@ successComponent = new Success(successElement, events);
 const basketElement = cloneTemplate(basketTemplate);
 basketComponent = new Basket(basketElement, events);
 
-// Создаем экземпляр превью один раз
+// Создаем экземпляр превью один раз с передачей events
 const previewElement = cloneTemplate(cardPreviewTemplate);
-previewCard = new CardPreview(previewElement, {
-  onToggleBasket: () => {
-    // Логика будет переопределяться при открытии
-  },
-});
+previewCard = new CardPreview(previewElement, events);
 
 // Функция для создания карточки каталога
 function createCatalogCard(product: IProduct): HTMLElement {
   const cardElement = cloneTemplate(cardCatalogTemplate);
   const card = new CardCatalog(cardElement, {
-    onClick: () => {
-      productsModel.setSelectedProduct(product);
-    },
+    onClick: () => events.emit("card:select", product),
   });
   card.title = product.title;
   card.price = product.price;
@@ -92,11 +86,9 @@ function createCatalogCard(product: IProduct): HTMLElement {
 // Функция для создания карточки корзины
 function createBasketCard(product: IProduct, index: number): HTMLElement {
   const cardElement = cloneTemplate(cardBasketTemplate);
-  const card = new BasketCard(cardElement, {
-    onDelete: () => {
-      basketModel.removeItem(product.id);
-    },
-  });
+  const card = new BasketCard(cardElement, () =>
+    events.emit("basket:remove", product),
+  );
   card.title = product.title;
   card.price = product.price;
   card.index = index;
@@ -123,9 +115,8 @@ function updateBasketView() {
 function updateFormsFromModel() {
   const buyerData = buyerModel.getData();
   orderForm.address = buyerData.address;
-  if (buyerData.payment) {
-    orderForm.payment = buyerData.payment;
-  }
+  // Убираем проверку, всегда устанавливаем payment (может быть null)
+  orderForm.payment = buyerData.payment;
   contactsForm.email = buyerData.email;
   contactsForm.phone = buyerData.phone;
 
@@ -167,6 +158,11 @@ events.on("card:select", (product: IProduct) => {
   productsModel.setSelectedProduct(product);
 });
 
+// Удаление товара из корзины
+events.on("basket:remove", (product: IProduct) => {
+  basketModel.removeItem(product.id);
+});
+
 // Открытие превью (реагируем на изменение выбранного продукта)
 events.on("products:selected", (product: IProduct) => {
   const isInBasket = basketModel.isInBasket(product.id);
@@ -183,20 +179,20 @@ events.on("products:selected", (product: IProduct) => {
       ? "Недоступно"
       : "Купить";
   previewCard.disabled = product.price === null;
-
-  // Переопределяем обработчик кнопки
-  if (product.price !== null) {
-    previewCard.buttonHandler = () => {
-      if (isInBasket) {
-        basketModel.removeItem(product.id);
-      } else {
-        basketModel.addItem(product);
-      }
-      modal.close();
-    };
-  }
-
   modal.render({ content: previewElement });
+});
+
+// Обработчик для кнопки в превью (генерирует событие)
+events.on("preview:toggle", () => {
+  const product = productsModel.getSelectedProduct();
+  if (product && product.price !== null) {
+    if (basketModel.isInBasket(product.id)) {
+      basketModel.removeItem(product.id);
+    } else {
+      basketModel.addItem(product);
+    }
+    modal.close();
+  }
 });
 
 // Обновление корзины (реагируем на изменение модели корзины)

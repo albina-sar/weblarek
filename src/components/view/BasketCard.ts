@@ -1,18 +1,14 @@
 import { BaseCard } from "./BaseCard";
 
-interface IBasketCardActions {
-  onDelete: () => void;
-}
-
 interface IBasketCardData {
   index: number;
 }
 
-export class BasketCard extends BaseCard<IBasketCardData & IBasketCardActions> {
+export class BasketCard extends BaseCard<IBasketCardData> {
   private _index: HTMLElement;
   private _button: HTMLButtonElement;
 
-  constructor(container: HTMLElement, actions: IBasketCardActions) {
+  constructor(container: HTMLElement, onDelete: () => void) {
     super(container);
     this._index = container.querySelector(".basket__item-index") as HTMLElement;
     this._button = container.querySelector(
@@ -20,7 +16,7 @@ export class BasketCard extends BaseCard<IBasketCardData & IBasketCardActions> {
     ) as HTMLButtonElement;
 
     if (this._button) {
-      this._button.addEventListener("click", actions.onDelete);
+      this._button.addEventListener("click", onDelete);
     }
   }
 

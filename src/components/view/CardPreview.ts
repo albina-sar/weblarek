@@ -1,17 +1,16 @@
+import { IEvents } from "../base/Events";
 import { BaseCard } from "./BaseCard";
 
-interface ICardPreviewActions {
-  onToggleBasket: () => void;
-}
-
-export class CardPreview extends BaseCard<ICardPreviewActions> {
+export class CardPreview extends BaseCard<{}> {
   protected _category: HTMLElement;
   protected _image: HTMLImageElement;
   protected _description: HTMLElement;
   protected _button: HTMLButtonElement;
-  private _buttonHandler: (() => void) | null = null;
 
-  constructor(container: HTMLElement, actions: ICardPreviewActions) {
+  constructor(
+    container: HTMLElement,
+    protected events: IEvents,
+  ) {
     super(container);
     this._category = container.querySelector(".card__category") as HTMLElement;
     this._image = container.querySelector(".card__image") as HTMLImageElement;
@@ -23,11 +22,7 @@ export class CardPreview extends BaseCard<ICardPreviewActions> {
     if (this._button) {
       this._button.addEventListener("click", (e) => {
         e.stopPropagation();
-        if (this._buttonHandler) {
-          this._buttonHandler();
-        } else {
-          actions.onToggleBasket();
-        }
+        this.events.emit("preview:toggle");
       });
     }
   }
@@ -63,10 +58,6 @@ export class CardPreview extends BaseCard<ICardPreviewActions> {
         this._button.removeAttribute("disabled");
       }
     }
-  }
-
-  set buttonHandler(handler: () => void) {
-    this._buttonHandler = handler;
   }
 
   private getCategoryClass(category: string): string {

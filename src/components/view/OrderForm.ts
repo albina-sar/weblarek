@@ -46,13 +46,16 @@ export class OrderForm extends Form<IOrderFormData> {
     this.addressInput.value = value;
   }
 
-  set payment(value: TPayment) {
+  set payment(value: TPayment | null) {
+    // Сбрасываем активные классы у обеих кнопок
+    this.cardButton.classList.remove("button_alt-active");
+    this.cashButton.classList.remove("button_alt-active");
+
+    // Устанавливаем активный класс если значение не null
     if (value === "card") {
       this.cardButton.classList.add("button_alt-active");
-      this.cashButton.classList.remove("button_alt-active");
     } else if (value === "cash") {
       this.cashButton.classList.add("button_alt-active");
-      this.cardButton.classList.remove("button_alt-active");
     }
   }
 }

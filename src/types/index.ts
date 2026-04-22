@@ -55,8 +55,5 @@ export interface IProductsResponse {
   items: IProduct[];
 }
 
-// Тип для базовой карточки (общие поля для всех карточек)
-export type TBaseCard = Pick<
-  IProduct,
-  "title" | "price" | "category" | "image" | "description"
->;
+// Тип для базовой карточки (только общие поля: название и цена)
+export type TBaseCard = Pick<IProduct, "title" | "price">;
